@@ -11,7 +11,8 @@ set(nm_SRC
         nm/elf.c
         nm/misc.c
         nm/linked_list.c
-        nm/extract_symbol.c)
+        nm/extract_symbol.c
+        nm/ar.c nm/str.c)
 
 set(objdump_SRC
         objdump/main.c)

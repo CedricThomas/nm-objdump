@@ -10,6 +10,8 @@ NM_SRC		=	main.c			\
 			linked_list.c		\
 			misc.c			\
 			extract_symbol.c	\
+			str.c			\
+			ar.c			\
 			elf.c
 
 OBJDUMP_SRC	=	main.c

@@ -10,7 +10,8 @@
 
 	#include <elf.h>
 
-	#define HEADER_ERROR 84
+	#define ERROR 84
+	#define HEADER_ERROR 42
 	#define SUCCESS 0
 
 typedef struct node_s {
@@ -39,6 +40,7 @@ typedef struct info_nm_s {
 **nm.c
 */
 int nm(info_nm_t *infos);
+int print_file(info_file_t *info, int multi);
 
 /*
 **elf.c
@@ -48,10 +50,13 @@ char *get_section_name(Elf64_Ehdr *ehead,
 Elf64_Shdr *elf_get_sheader(Elf64_Ehdr *hdr);
 Elf64_Shdr *elf_get_section(info_nm_t *info, char const *sname);
 int check_elf(info_nm_t *info);
+int print_elf(info_nm_t *info);
 
 /*
-**ar
+**ar.c
 */
+int print_ar(info_nm_t *info);
+int check_ar(info_nm_t *info);
 
 /*
 ** extract_symbol.c
@@ -65,6 +70,11 @@ int map_file(info_file_t *finfo);
 int nm_perror(info_nm_t *infos);
 int nmputerror(info_nm_t *infos, char const *str);
 int is_nm_printable(size_t x);
+
+/*
+** str.c
+*/
+int my_strlen(void *ptr, char c);
 int spec_strcmp(char *a, char *b);
 
 /*
