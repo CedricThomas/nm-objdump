@@ -1,0 +1,4 @@
+**.o
+CMakelists.txt
+**~
+cmake-build-debug
