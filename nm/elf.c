@@ -53,8 +53,9 @@ int check_elf(info_nm_t *info)
 	};
 
 	elf = info->finfo.vadress;
-	if (memcmp(info->finfo.vadress, header, sizeof(header)) != 0)
-		return (nmputerror(info, "Invalid elf magic number."));
+	if (memcmp(info->finfo.vadress, header, sizeof(header)) != 0) {
+		return (HEADER_ERROR);
+	}
 	if (elf->e_type == ELFCLASSNONE)
 		return (nmputerror(info, "File architecture not supported."));
 	info->finfo.archi = elf->e_type;

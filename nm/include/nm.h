@@ -10,6 +10,9 @@
 
 	#include <elf.h>
 
+	#define HEADER_ERROR 84
+	#define SUCCESS 0
+
 typedef struct node_s {
 	char *name;
 	void *value;
@@ -47,9 +50,14 @@ Elf64_Shdr *elf_get_section(info_nm_t *info, char const *sname);
 int check_elf(info_nm_t *info);
 
 /*
+**ar
+*/
+
+/*
 ** extract_symbol.c
 */
 int extract_symbol_list(info_nm_t *infos);
+int map_file(info_file_t *finfo);
 
 /*
 **misc.c

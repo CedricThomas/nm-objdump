@@ -12,7 +12,7 @@
 #include <elf.h>
 #include "nm.h"
 
-static int map_file(info_file_t *finfo)
+int map_file(info_file_t *finfo)
 {
 	struct stat s;
 	int fd;
@@ -69,11 +69,7 @@ static int create_symbol_list(info_nm_t *infos)
 
 int extract_symbol_list(info_nm_t *infos)
 {
-	if (map_file(&infos->finfo))
-		return (nm_perror(infos));
-	if (check_elf(infos)) // archi
-		return (1);
-	if (create_symbol_list(infos)) // archi
+	if (create_symbol_list(infos))
 		return (1);
 	list_sort(infos->finfo.sym_links);
 	return (0);
