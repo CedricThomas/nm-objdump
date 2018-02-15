@@ -55,9 +55,9 @@ int check_elf(info_nm_t *info)
 
 	if (memcmp(info->finfo.vadress, header, sizeof(header)) != 0)
 		return (HEADER_ERROR);
-	if (elf->e_type == ELFCLASSNONE)
+	if (elf->e_ident[EI_CLASS] == ELFCLASSNONE)
 		return (nmputerror(info, "File architecture not supported."));
-	info->finfo.archi = elf->e_type;
+	info->finfo.archi = elf->e_ident[EI_CLASS];
 	if(elf->e_ident[EI_DATA] != ELFDATA2LSB)
 		return (nmputerror(info, "Unsupported ELF File byte order."));
 	if (elf->e_ident[EI_VERSION] != EV_CURRENT)

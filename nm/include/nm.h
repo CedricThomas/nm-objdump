@@ -23,7 +23,7 @@ typedef struct node_s {
 typedef node_t *list_t;
 
 typedef struct info_file_s {
-	const char *name;
+	char *name;
 	void *vadress;
 	size_t size;
 	size_t archi;

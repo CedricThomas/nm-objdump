@@ -31,6 +31,10 @@ char print_type(Elf64_Sym *sym, Elf64_Shdr *shdr)
 		if (sym->st_shndx == SHN_UNDEF)
 			c = 'v';
 	}
+//	else if (shdr[sym->st_shndx].sh_type == )
+//	{
+//		c = 'r';
+//	}
 	else if (sym->st_shndx == SHN_UNDEF)
 		c = 'U';
 	else if (sym->st_shndx == SHN_ABS)
@@ -61,13 +65,15 @@ char print_type(Elf64_Sym *sym, Elf64_Shdr *shdr)
 static void print_syms(info_file_t *info)
 {
 	void *sheader = elf_get_sheader(info->vadress);
+	char c;
 
 	for (list_t n = info->sym_links; n != NULL; n = n->next) {
-		if (((Elf64_Sym *)n->value)->st_value)
+		c = print_type(n->value, sheader);
+		if (((Elf64_Sym *)n->value)->st_value || (c != 'U' && c != 'w'))
 			printf("%016lx ", ((Elf64_Sym *)n->value)->st_value);
 		else
 			printf("%16s ", "");
-		printf("%c ", print_type(n->value, sheader));
+		printf("%c ", c);
 		printf("%s\n", n->name);
 	}
 }
@@ -80,8 +86,6 @@ int print_file(info_file_t *info, int multi)
 	list_clear(&info->sym_links);
 	return (0);
 }
-
-//TODO munmap nettly
 
 int nm(info_nm_t *info)
 {

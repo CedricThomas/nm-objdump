@@ -21,61 +21,38 @@ static struct ar_hdr *next_ar(struct ar_hdr *beg, size_t *idx, size_t end)
 	return ((void *)beg + *idx);
 }
 
-static void create_header(struct ar_hdr *header, info_nm_t *info, size_t sz)
+static void create_header(struct ar_hdr *header, info_nm_t *info, size_t sz, struct ar_hdr *names)
 {
-	info->finfo.name = header->ar_name;
+	int len = my_strlen(header->ar_name, '/');
+	void *save;
+
+	if (len)
+		info->finfo.name = strndup(header->ar_name, len);
+	else {
+		save = (void *) names + sizeof(struct ar_hdr) +
+		                  atoll(header->ar_name + 1);
+		len = my_strlen(save, '/');
+		info->finfo.name = strndup(save, len);
+	}
 	info->finfo.size = (size_t) atoll(header->ar_size);
 	info->finfo.vadress = info->finfo.vadress + sz + sizeof(struct ar_hdr);
 }
 
-int ar_format(info_nm_t *info)
-{
-	info_nm_t tmp_info;
-	struct ar_hdr *name_header;
-	size_t i = SARMAG;
-	int len = 0;
-
-	memcpy(&tmp_info, info, sizeof(info_nm_t));
-	if (info->multi_nm)
-		printf("\n%s:\n", info->finfo.name);
-	name_header = next_ar(info->finfo.vadress, &i, info->finfo.size);
-	for (struct ar_hdr *n = next_ar(info->finfo.vadress, &i,
-	                                info->finfo.size); n; ) {
-
-		len = (int) my_strlen(n->ar_name, '/');
-		if (len)
-			printf("\n%.*s:\n", len, n->ar_name);
-		else {
-			n = (void *) name_header + sizeof(struct ar_hdr) + atoll(n->ar_name + 1);
-			printf("\n%.*s:\n", my_strlen(n, '/'), (char *) n);
-		}
-		if (!check_elf(&tmp_info)) {
-			extract_symbol_list(&tmp_info);
-		}
-		print_file(&tmp_info.finfo, 0);
-		n = next_ar(info->finfo.vadress, &i, info->finfo.size);
-	}
-	return (0);
-}
-
-static void print_subfile(info_nm_t *info, struct ar_hdr *names_h,
+static int print_subfile(info_nm_t *info, struct ar_hdr *names_h,
 	struct ar_hdr *current_h, size_t *current_idx)
 {
 	info_nm_t new_info;
-	int len = my_strlen(current_h->ar_name, '/');
 
 	memcpy(&new_info, info, sizeof(info_nm_t));
-	create_header(current_h, &new_info, *current_idx);
-	if (len)
-		printf("\n%.*s:\n", len, current_h->ar_name);
-	else {
-		current_h = (void *) names_h + sizeof(struct ar_hdr) + atoll(current_h->ar_name + 1);
-		printf("\n%.*s:\n", my_strlen(current_h, '/'), (char *) current_h);
-	}
-	if (!check_elf(&new_info)) {
-		extract_symbol_list(&new_info);
-	}
+	create_header(current_h, &new_info, *current_idx, names_h);
+	printf("\n%s:\n", new_info.finfo.name);
+	if (check_elf(&new_info))
+		return (1);
+	if (extract_symbol_list(&new_info))
+		return (1);
 	print_file(&new_info.finfo, 0);
+	free(new_info.finfo.name);
+	return (0);
 }
 
 int check_ar(info_nm_t *info)
