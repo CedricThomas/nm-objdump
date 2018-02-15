@@ -6,73 +6,59 @@
 */
 #include <stdio.h>
 #include <elf.h>
-#include <sys/mman.h>
-#include <memory.h>
-#include <ar.h>
 #include <stdlib.h>
+#include <fcntl.h>
+#include <sys/stat.h>
+#include <sys/mman.h>
 #include <zconf.h>
 #include "nm.h"
 
-char print_type(Elf64_Sym *sym, Elf64_Shdr *shdr)
+int map_file(info_file_t *finfo)
 {
-	char c;
+	struct stat s;
+	int fd;
 
-	if (ELF64_ST_BIND(sym->st_info) == STB_GNU_UNIQUE)
-		c = 'u';
-	else if (ELF64_ST_BIND(sym->st_info) == STB_WEAK)
-	{
-		c = 'W';
-		if (sym->st_shndx == SHN_UNDEF)
-			c = 'w';
-	}
-	else if (ELF64_ST_BIND(sym->st_info) == STB_WEAK && ELF64_ST_TYPE(sym->st_info) == STT_OBJECT)
-	{
-		c = 'V';
-		if (sym->st_shndx == SHN_UNDEF)
-			c = 'v';
-	}
-//	else if (shdr[sym->st_shndx].sh_type == )
-//	{
-//		c = 'r';
-//	}
-	else if (sym->st_shndx == SHN_UNDEF)
-		c = 'U';
-	else if (sym->st_shndx == SHN_ABS)
-		c = 'A';
-	else if (sym->st_shndx == SHN_COMMON)
-		c = 'C';
-	else if (shdr[sym->st_shndx].sh_type == SHT_NOBITS
-	         && shdr[sym->st_shndx].sh_flags == (SHF_ALLOC | SHF_WRITE))
-		c = 'B';
-	else if (shdr[sym->st_shndx].sh_type == SHT_PROGBITS
-	         && shdr[sym->st_shndx].sh_flags == SHF_ALLOC)
-		c = 'R';
-	else if (shdr[sym->st_shndx].sh_type == SHT_PROGBITS
-	         && shdr[sym->st_shndx].sh_flags == (SHF_ALLOC | SHF_WRITE))
-		c = 'D';
-	else if (shdr[sym->st_shndx].sh_type == SHT_PROGBITS
-	         && shdr[sym->st_shndx].sh_flags == (SHF_ALLOC | SHF_EXECINSTR))
-		c = 'T';
-	else if (shdr[sym->st_shndx].sh_type == SHT_DYNAMIC)
-		c = 'D';
-	else
-		c = '?';
-	if (ELF64_ST_BIND(sym->st_info) == STB_LOCAL && c != '?')
-		c += 32;
-	return c;
+	fd = open(finfo->name, O_RDONLY);
+	if (fd == -1)
+		return (1);
+	if (fstat(fd, &s) == -1)
+		return (1);
+	finfo->size = (size_t) s.st_size;
+	finfo->vadress = mmap(0, finfo->size, PROT_READ,
+	                      MAP_PRIVATE, fd, 0);
+	if (finfo->vadress == MAP_FAILED)
+		return (1);
+	close(fd);
+	return (0);
 }
 
-static void print_syms(info_file_t *info)
+static void print_syms_64(info_file_t *info)
 {
-	void *sheader = elf_get_sheader(info->vadress);
 	char c;
 
 	for (list_t n = info->sym_links; n != NULL; n = n->next) {
-		c = print_type(n->value, sheader);
-		if (((Elf64_Sym *)n->value)->st_value || (c != 'U' && c != 'w'))
+		c = print_type_64(n->value, info);
+		if (((Elf64_Sym *)n->value)->st_value ||
+			(c != 'U' && c != 'w'))
 			printf("%016lx ", ((Elf64_Sym *)n->value)->st_value);
 		else
 			printf("%16s ", "");
+		printf("%c ", c);
+		printf("%s\n", n->name);
+	}
+}
+
+static void print_syms_32(info_file_t *info)
+{
+	char c;
+
+	for (list_t n = info->sym_links; n != NULL; n = n->next) {
+		c = print_type_32(n->value, info);
+		if (((Elf32_Sym *)n->value)->st_value ||
+			(c != 'U' && c != 'w'))
+			printf("%08x ", ((Elf32_Sym *)n->value)->st_value);
+		else
+			printf("%8s ", "");
 		printf("%c ", c);
 		printf("%s\n", n->name);
 	}
@@ -82,7 +68,10 @@ int print_file(info_file_t *info, int multi)
 {
 	if (multi)
 		printf("\n%s:\n", info->name);
-	print_syms(info);
+	if (info->archi == ELFCLASS32)
+		print_syms_32(info);
+	else
+		print_syms_64(info);
 	list_clear(&info->sym_links);
 	return (0);
 }

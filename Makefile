@@ -8,11 +8,15 @@
 NM_SRC		=	main.c			\
 			nm.c			\
 			linked_list.c		\
+			print_type.c		\
 			misc.c			\
 			extract_symbol.c	\
 			str.c			\
 			ar.c			\
-			elf.c
+			elf.c			\
+			elf/elf_32.c		\
+			elf/elf_64.c
+
 
 OBJDUMP_SRC	=	main.c
 

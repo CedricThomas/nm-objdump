@@ -45,10 +45,16 @@ int print_file(info_file_t *info, int multi);
 /*
 **elf.c
 */
-char *get_section_name(Elf64_Ehdr *ehead,
+char *get_section_name_64(Elf64_Ehdr *ehead,
 	Elf64_Shdr *rshead, Elf64_Shdr *shead);
-Elf64_Shdr *elf_get_sheader(Elf64_Ehdr *hdr);
-Elf64_Shdr *elf_get_section(info_nm_t *info, char const *sname);
+Elf64_Shdr *elf_get_sheader_64(Elf64_Ehdr *hdr);
+Elf64_Shdr *elf_get_section_64(info_file_t *info, char const *sname);
+
+char *get_section_name_32(Elf32_Ehdr *ehead,
+	Elf32_Shdr *rshead, Elf32_Shdr *shead);
+Elf32_Shdr *elf_get_sheader_32(Elf32_Ehdr *hdr);
+Elf32_Shdr *elf_get_section_32(info_nm_t *info, char const *sname);
+
 int check_elf(info_nm_t *info);
 int print_elf(info_nm_t *info);
 
@@ -83,5 +89,11 @@ int spec_strcmp(char *a, char *b);
 void list_clear(list_t *list);
 int list_add(list_t *front_ptr, void *elem);
 void list_sort(list_t list);
+
+/*
+**print_type.c
+*/
+char print_type_64(Elf64_Sym *sym, info_file_t *info);
+char print_type_32(Elf32_Sym *sym, info_file_t *info);
 
 #endif /* !NMOBJDUMP_NM_H */

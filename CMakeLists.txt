@@ -12,7 +12,11 @@ set(nm_SRC
         nm/misc.c
         nm/linked_list.c
         nm/extract_symbol.c
-        nm/ar.c nm/str.c)
+        nm/ar.c
+        nm/str.c
+        nm/print_type.c
+        nm/elf/elf_32.c
+        nm/elf/elf_64.c)
 
 set(objdump_SRC
         objdump/main.c)
