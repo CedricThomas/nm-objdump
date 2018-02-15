@@ -18,7 +18,14 @@ NM_SRC		=	main.c			\
 			elf/elf_64.c
 
 
-OBJDUMP_SRC	=	main.c
+OBJDUMP_SRC	=	main.c			\
+			obj.c			\
+			ar.c			\
+			elf.c			\
+			elf_format.c		\
+			misc.c			\
+			print_hexa.c		\
+			print_section.c
 
 NM_OBJ		=	$(addprefix ./nm/, $(NM_SRC:.c=.o))
 

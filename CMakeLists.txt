@@ -19,7 +19,8 @@ set(nm_SRC
         nm/elf/elf_64.c)
 
 set(objdump_SRC
-        objdump/main.c)
+        objdump/main.c
+        objdump/include/objdump.h objdump/obj.c objdump/elf_format.c objdump/elf.c objdump/ar.c objdump/misc.c objdump/print_section.c objdump/print_hexa.c)
 
 add_executable(nm ${nm_SRC})
 
