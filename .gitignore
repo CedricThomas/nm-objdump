@@ -2,3 +2,5 @@
 CMakelists.txt
 **~
 cmake-build-debug
+.idea
+binaries
