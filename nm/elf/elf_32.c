@@ -22,10 +22,10 @@ Elf32_Shdr *elf_get_sheader_32(Elf32_Ehdr *hdr)
 	return (Elf32_Shdr *) ((size_t) hdr + hdr->e_shoff);
 }
 
-Elf32_Shdr *elf_get_section_32(info_nm_t *info, char const *sname)
+Elf32_Shdr *elf_get_section_32(info_file_t *info, char const *sname)
 {
-	Elf32_Ehdr *eheader = info->finfo.vadress;
-	Elf32_Shdr *sheader = elf_get_sheader_32(info->finfo.vadress);
+	Elf32_Ehdr *eheader = info->vadress;
+	Elf32_Shdr *sheader = elf_get_sheader_32(info->vadress);
 	void *section = NULL;
 	size_t sh_size;
 	char *cname;

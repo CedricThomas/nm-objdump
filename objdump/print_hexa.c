@@ -6,7 +6,6 @@
 */
 #include <glob.h>
 #include <stdio.h>
-#include <elf.h>
 #include "objdump.h"
 
 static void print_hex_val(unsigned char *section, size_t hsize, size_t idx)
@@ -42,25 +41,22 @@ static void print_ascii_val(unsigned char *section, size_t hsize, size_t idx)
 	}
 }
 
-int print_hexa_64(unsigned char *section, Elf64_Shdr *sheader)
+int print_hexa(unsigned char *section, size_t addr, size_t  size)
 {
-	for (size_t idx = 0; idx < sheader->sh_size; idx += BYTES) {
-		printf(" %04lx", sheader->sh_addr + idx);
-		print_hex_val(section, sheader->sh_size, idx);
-		printf("  ");
-		print_ascii_val(section, sheader->sh_size, idx);
-		printf("\n");
-	}
-	return (0);
-}
+	int padding = 0;
+	size_t value = addr + size;
 
-int print_hexa_32(unsigned char *section, Elf32_Shdr *sheader)
-{
-	for (size_t idx = 0; idx < sheader->sh_size; idx += BYTES) {
-		printf(" %04lx", sheader->sh_addr + idx);
-		print_hex_val(section, sheader->sh_size, idx);
+	while (value) {
+		value = value / 16;
+		padding += 1;
+	}
+	if (padding < 4)
+		padding = 4;
+	for (size_t idx = 0; idx < size; idx += BYTES) {
+		printf(" %0*lx", padding, addr + idx);
+		print_hex_val(section, size, idx);
 		printf("  ");
-		print_ascii_val(section, sheader->sh_size, idx);
+		print_ascii_val(section, size, idx);
 		printf("\n");
 	}
 	return (0);

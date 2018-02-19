@@ -36,10 +36,12 @@ int objdump(info_obj_t *infos);
 /*
 **elf_format.c
 */
-char *get_section_name_64(Elf64_Ehdr *ehead, Elf64_Shdr *rshead, Elf64_Shdr *shead);
+char *get_section_name_64(Elf64_Ehdr *ehead, Elf64_Shdr *rshead,
+	Elf64_Shdr *shead);
 Elf64_Shdr *elf_get_sheader_64(Elf64_Ehdr *hdr);
 
-char *get_section_name_32(Elf32_Ehdr *ehead, Elf32_Shdr *rshead, Elf32_Shdr *shead);
+char *get_section_name_32(Elf32_Ehdr *ehead, Elf32_Shdr *rshead,
+	Elf32_Shdr *shead);
 Elf32_Shdr *elf_get_sheader_32(Elf32_Ehdr *hdr);
 
 /*
@@ -60,17 +62,31 @@ int print_ar(info_obj_t *info);
 int my_perror(info_obj_t *infos);
 int my_puterror(info_obj_t *infos, char const *str);
 int my_strlen(void *ptr, char c);
+void print_flags(size_t flags);
 
 /*
 **print_section.c
 */
-int print_sections(info_file_t *info); // => dual archi ?
+int print_sections(info_file_t *info);
+
+/*
+**print_header.c
+*/
+int print_header_32(info_file_t *info);
+int print_header_64(info_file_t *info);
 int print_header(info_file_t *info);
+
+/*
+**flags.c
+*/
+size_t catch_flags_64(Elf64_Shdr *shdr, Elf64_Ehdr *ehdr,
+	size_t size_headers);
+size_t catch_flags_32(Elf32_Shdr *shdr, Elf32_Ehdr *ehdr,
+	size_t size_headers);
 
 /*
 **print_hexa.c
 */
-int print_hexa_64(unsigned char *section, Elf64_Shdr *sheader);
-int print_hexa_32(unsigned char *section, Elf32_Shdr *sheader);
+int print_hexa(unsigned char *section, size_t addr, size_t  size);
 
 #endif /* !NMOBJDUMP_OBJDUMP_H */

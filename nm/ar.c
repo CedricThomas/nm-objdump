@@ -15,13 +15,16 @@ static struct ar_hdr *next_ar(struct ar_hdr *beg, size_t *idx, size_t end)
 {
 	struct ar_hdr *ar = (void *)beg + *idx;
 
+	if (beg == 0)
+		return (NULL);
 	*idx += atol(ar->ar_size) + sizeof(struct ar_hdr);
 	if (*idx >= end)
 		return (NULL);
 	return ((void *)beg + *idx);
 }
 
-static void create_header(struct ar_hdr *header, info_nm_t *info, size_t sz, struct ar_hdr *names)
+static void create_header(struct ar_hdr *header, info_nm_t *info,
+	size_t sz, struct ar_hdr *names)
 {
 	int len = my_strlen(header->ar_name, '/');
 	void *save;

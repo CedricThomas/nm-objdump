@@ -53,7 +53,7 @@ Elf64_Shdr *elf_get_section_64(info_file_t *info, char const *sname);
 char *get_section_name_32(Elf32_Ehdr *ehead,
 	Elf32_Shdr *rshead, Elf32_Shdr *shead);
 Elf32_Shdr *elf_get_sheader_32(Elf32_Ehdr *hdr);
-Elf32_Shdr *elf_get_section_32(info_nm_t *info, char const *sname);
+Elf32_Shdr *elf_get_section_32(info_file_t *info, char const *sname);
 
 int check_elf(info_nm_t *info);
 int print_elf(info_nm_t *info);
