@@ -9,7 +9,11 @@
 #include <memory.h>
 #include "nm.h"
 
-static char get_bind_symbol_64(Elf64_Sym *sym)
+#ifdef ARCHI32
+static char get_bind_symbol_32(Elf_Sym *sym)
+#elif ARCHI64
+static char get_bind_symbol_64(Elf_Sym *sym)
+#endif
 {
 	char c = '?';
 
@@ -28,7 +32,12 @@ static char get_bind_symbol_64(Elf64_Sym *sym)
 	return (c);
 }
 
-static char get_progbits_64(Elf64_Sym *sym, Elf64_Shdr *shdr)
+
+#ifdef ARCHI32
+static char get_progbits_32(Elf_Sym *sym, Elf_Shdr *shdr)
+#elif ARCHI64
+static char get_progbits_64(Elf_Sym *sym, Elf_Shdr *shdr)
+#endif
 {
 	char c = '?';
 
@@ -44,7 +53,11 @@ static char get_progbits_64(Elf64_Sym *sym, Elf64_Shdr *shdr)
 	return (c);
 }
 
-static char get_special_64(Elf64_Sym *sym, Elf64_Shdr *shdr)
+#ifdef ARCHI32
+static char get_special_32(Elf_Sym *sym, Elf_Shdr *shdr)
+#elif ARCHI64
+static char get_special_64(Elf_Sym *sym, Elf_Shdr *shdr)
+#endif
 {
 	char c = '?';
 
@@ -56,7 +69,11 @@ static char get_special_64(Elf64_Sym *sym, Elf64_Shdr *shdr)
 	return (c);
 }
 
-static char get_basic_64(Elf64_Sym *sym)
+#ifdef ARCHI32
+static char get_basic_32(Elf_Sym *sym)
+#elif ARCHI64
+static char get_basic_64(Elf_Sym *sym)
+#endif
 {
 	char c;
 
@@ -77,9 +94,24 @@ static char get_basic_64(Elf64_Sym *sym)
 	return (c);
 }
 
-char print_type_64(Elf64_Sym *sym, info_file_t *info)
+#ifdef ARCHI32
+char print_type_32(Elf_Sym *sym, info_file_t *info)
+#elif ARCHI64
+char print_type_64(Elf_Sym *sym, info_file_t *info)
+#endif
 {
-	Elf64_Shdr *shdr = elf_get_sheader_64(info->vadress);
+	#ifdef ARCHI32
+	Elf_Shdr *shdr = elf_get_sheader_32(info->vadress);
+	char c = get_bind_symbol_32(sym);
+
+	if (c == '?')
+		c = get_basic_32(sym);
+	if (c == '?')
+		c = get_progbits_32(sym, shdr);
+	if (c == '?')
+		c = get_special_32(sym, shdr);
+	#elif ARCHI64
+	Elf_Shdr *shdr = elf_get_sheader_64(info->vadress);
 	char c = get_bind_symbol_64(sym);
 
 	if (c == '?')
@@ -88,54 +120,8 @@ char print_type_64(Elf64_Sym *sym, info_file_t *info)
 		c = get_progbits_64(sym, shdr);
 	if (c == '?')
 		c = get_special_64(sym, shdr);
+	#endif
 	if (ELF64_ST_BIND(sym->st_info) == STB_LOCAL && c != '?')
-		c += 32;
-	return c;
-}
-
-char print_type_32(Elf32_Sym *sym, info_file_t *info)
-{
-	Elf32_Shdr *shdr = elf_get_sheader_32(info->vadress);
-	char c;
-
-	if (ELF32_ST_BIND(sym->st_info) == STB_GNU_UNIQUE)
-		c = 'u';
-	else if (ELF32_ST_BIND(sym->st_info) == STB_WEAK)
-	{
-		c = 'W';
-		if (sym->st_shndx == SHN_UNDEF)
-			c = 'w';
-	}
-	else if (ELF32_ST_BIND(sym->st_info) == STB_WEAK &&
-		ELF32_ST_TYPE(sym->st_info) == STT_OBJECT)
-	{
-		c = 'V';
-		if (sym->st_shndx == SHN_UNDEF)
-			c = 'v';
-	}
-	else if (sym->st_shndx == SHN_UNDEF)
-		c = 'U';
-	else if (sym->st_shndx == SHN_ABS)
-		c = 'A';
-	else if (sym->st_shndx == SHN_COMMON)
-		c = 'C';
-	else if (shdr[sym->st_shndx].sh_type == SHT_NOBITS
-	         && shdr[sym->st_shndx].sh_flags == (SHF_ALLOC | SHF_WRITE))
-		c = 'B';
-	else if (shdr[sym->st_shndx].sh_type == SHT_PROGBITS
-	         && shdr[sym->st_shndx].sh_flags == SHF_ALLOC)
-		c = 'R';
-	else if (shdr[sym->st_shndx].sh_type == SHT_PROGBITS
-	         && shdr[sym->st_shndx].sh_flags == (SHF_ALLOC | SHF_WRITE))
-		c = 'D';
-	else if (shdr[sym->st_shndx].sh_type == SHT_PROGBITS
-	         && shdr[sym->st_shndx].sh_flags == (SHF_ALLOC | SHF_EXECINSTR))
-		c = 'T';
-	else if (shdr[sym->st_shndx].sh_type == SHT_DYNAMIC)
-		c = 'D';
-	else
-		c = '?';
-	if (ELF32_ST_BIND(sym->st_info) == STB_LOCAL && c != '?')
 		c += 32;
 	return c;
 }

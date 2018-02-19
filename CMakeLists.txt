@@ -4,6 +4,8 @@ cmake_minimum_required(VERSION 3.8)
 
 set(CMAKE_EXE_LINKER_FLAGS "-W -Wall -Wextra")
 
+set(CMAKE_C_FLAGS "-DARCHI32")
+
 set(nm_SRC
         nm/include/nm.h
         nm/main.c
@@ -11,12 +13,11 @@ set(nm_SRC
         nm/elf.c
         nm/misc.c
         nm/linked_list.c
-        nm/extract_symbol.c
+        nm/symbols.c
         nm/ar.c
         nm/str.c
         nm/print_type.c
-        nm/elf/elf_32.c
-        nm/elf/elf_64.c)
+        nm/elf_format.c)
 
 set(objdump_SRC
         objdump/main.c

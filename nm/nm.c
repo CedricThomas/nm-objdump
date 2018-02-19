@@ -13,7 +13,7 @@
 #include <zconf.h>
 #include "nm.h"
 
-int map_file(info_file_t *finfo)
+static int map_file(info_file_t *finfo)
 {
 	struct stat s;
 	int fd;
@@ -32,36 +32,17 @@ int map_file(info_file_t *finfo)
 	return (0);
 }
 
-static void print_syms_64(info_file_t *info)
+int extract_symbol_list(info_nm_t *infos)
 {
-	char c;
-
-	for (list_t n = info->sym_links; n != NULL; n = n->next) {
-		c = print_type_64(n->value, info);
-		if (((Elf64_Sym *)n->value)->st_value ||
-			(c != 'U' && c != 'w'))
-			printf("%016lx ", ((Elf64_Sym *)n->value)->st_value);
-		else
-			printf("%16s ", "");
-		printf("%c ", c);
-		printf("%s\n", n->name);
+	if (infos->finfo.archi == ELFCLASS64) {
+		if (create_symbol_list_64(infos))
+			return (1);
+	} else {
+		if (create_symbol_list_32(infos))
+			return (1);
 	}
-}
-
-static void print_syms_32(info_file_t *info)
-{
-	char c;
-
-	for (list_t n = info->sym_links; n != NULL; n = n->next) {
-		c = print_type_32(n->value, info);
-		if (((Elf32_Sym *)n->value)->st_value ||
-			(c != 'U' && c != 'w'))
-			printf("%08x ", ((Elf32_Sym *)n->value)->st_value);
-		else
-			printf("%8s ", "");
-		printf("%c ", c);
-		printf("%s\n", n->name);
-	}
+	list_sort(infos->finfo.sym_links);
+	return (0);
 }
 
 int print_file(info_file_t *info, int multi)

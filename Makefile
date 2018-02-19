@@ -8,14 +8,10 @@
 NM_SRC		=	main.c			\
 			nm.c			\
 			linked_list.c		\
-			print_type.c		\
 			misc.c			\
-			extract_symbol.c	\
 			str.c			\
 			ar.c			\
-			elf.c			\
-			elf/elf_32.c		\
-			elf/elf_64.c
+			elf.c
 
 
 OBJDUMP_SRC	=	main.c			\
@@ -44,7 +40,19 @@ $(OBJDUMP_NAME): CFLAGS	= -g -W -Wall -Wextra  -I objdump/include
 all: $(NM_NAME) $(OBJDUMP_NAME)
 
 $(NM_NAME): $(NM_OBJ)
-	gcc -o $(NM_NAME) $(NM_OBJ)
+	gcc -c $(CFLAGS) -DARCHI64 $(addprefix ./nm/, elf_format.c) -o $(addprefix ./nm/, elf_format_64.o)
+	gcc -c $(CFLAGS) -DARCHI32 $(addprefix ./nm/, elf_format.c) -o $(addprefix ./nm/, elf_format_32.o)
+
+	gcc -c $(CFLAGS) -DARCHI64 $(addprefix ./nm/, print_type.c) -o $(addprefix ./nm/, print_type_64.o)
+	gcc -c $(CFLAGS) -DARCHI32 $(addprefix ./nm/, print_type.c) -o $(addprefix ./nm/, print_type_32.o)
+
+	gcc -c $(CFLAGS) -DARCHI64 $(addprefix ./nm/, symbols.c) -o $(addprefix ./nm/, symbols_64.o)
+	gcc -c $(CFLAGS) -DARCHI32 $(addprefix ./nm/, symbols.c) -o $(addprefix ./nm/, symbols_32.o)
+
+	gcc -o $(NM_NAME) $(NM_OBJ)\
+			$(addprefix ./nm/, elf_format_64.o) $(addprefix ./nm/, elf_format_32.o)	\
+			$(addprefix ./nm/, print_type_64.o) $(addprefix ./nm/, print_type_32.o)	\
+			$(addprefix ./nm/, symbols_64.o) $(addprefix ./nm/, symbols_32.o)
 
 $(OBJDUMP_NAME): $(OBJDUMP_OBJ)
 	gcc -o $(OBJDUMP_NAME) $(OBJDUMP_OBJ)

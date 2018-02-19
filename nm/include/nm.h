@@ -14,6 +14,16 @@
 	#define HEADER_ERROR 42
 	#define SUCCESS 0
 
+	#ifdef ARCHI64
+		typedef Elf64_Sym Elf_Sym;
+		typedef Elf64_Ehdr Elf_Ehdr;
+		typedef Elf64_Shdr Elf_Shdr;
+	#elif ARCHI32
+		typedef Elf32_Sym Elf_Sym;
+		typedef Elf32_Ehdr Elf_Ehdr;
+		typedef Elf32_Shdr Elf_Shdr;
+	#endif /* !ARCHI */
+
 typedef struct node_s {
 	char *name;
 	void *value;
@@ -41,9 +51,10 @@ typedef struct info_nm_s {
 */
 int nm(info_nm_t *infos);
 int print_file(info_file_t *info, int multi);
+int extract_symbol_list(info_nm_t *infos);
 
 /*
-**elf.c
+**elf_format.c
 */
 char *get_section_name_64(Elf64_Ehdr *ehead,
 	Elf64_Shdr *rshead, Elf64_Shdr *shead);
@@ -55,6 +66,9 @@ char *get_section_name_32(Elf32_Ehdr *ehead,
 Elf32_Shdr *elf_get_sheader_32(Elf32_Ehdr *hdr);
 Elf32_Shdr *elf_get_section_32(info_file_t *info, char const *sname);
 
+/*
+**elf.c
+*/
 int check_elf(info_nm_t *info);
 int print_elf(info_nm_t *info);
 
@@ -65,10 +79,16 @@ int print_ar(info_nm_t *info);
 int check_ar(info_nm_t *info);
 
 /*
-** extract_symbol.c
+** symbols.c
 */
-int extract_symbol_list(info_nm_t *infos);
-int map_file(info_file_t *finfo);
+int store_symbol_list_32(info_nm_t *infos, uint32_t size,
+	Elf32_Sym *symbols, void *strtab_p);
+int store_symbol_list_64(info_nm_t *infos, uint64_t size,
+	Elf64_Sym *symbols, void *strtab_p);
+int create_symbol_list_32(info_nm_t *infos);
+int create_symbol_list_64(info_nm_t *infos);
+void print_syms_32(info_file_t *info);
+void print_syms_64(info_file_t *info);
 
 /*
 **misc.c
