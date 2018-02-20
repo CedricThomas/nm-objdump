@@ -21,7 +21,16 @@ set(nm_SRC
 
 set(objdump_SRC
         objdump/main.c
-        objdump/include/objdump.h objdump/obj.c objdump/elf_format.c objdump/elf.c objdump/ar.c objdump/misc.c objdump/print_section.c objdump/print_hexa.c objdump/include/flags.h objdump/print_header.c objdump/flags.c)
+        objdump/include/objdump.h
+        objdump/obj.c
+        objdump/elf_format.c
+        objdump/elf.c
+        objdump/ar.c
+        objdump/misc.c
+        objdump/print_hexa.c
+        objdump/include/flags.h
+        objdump/common.c
+        objdump/print.c)
 
 add_executable(nm ${nm_SRC})
 

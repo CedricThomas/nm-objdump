@@ -16,6 +16,15 @@
 	#define BYTES 16
 	#define COL 4
 
+
+	#ifdef ARCHI64
+		typedef Elf64_Ehdr Elf_Ehdr;
+		typedef Elf64_Shdr Elf_Shdr;
+	#elif ARCHI32
+		typedef Elf32_Ehdr Elf_Ehdr;
+		typedef Elf32_Shdr Elf_Shdr;
+	#endif /* !ARCHI */
+
 typedef struct info_file_s {
 	char *name;
 	void *vadress;
@@ -62,27 +71,28 @@ int print_ar(info_obj_t *info);
 int my_perror(info_obj_t *infos);
 int my_puterror(info_obj_t *infos, char const *str);
 int my_strlen(void *ptr, char c);
+
+/*
+** prints.c
+*/
+int print_sections(info_file_t *info);
+int print_header(info_file_t *info);
 void print_flags(size_t flags);
 
 /*
-**print_section.c
-*/
-int print_sections(info_file_t *info);
-
-/*
-**print_header.c
-*/
-int print_header_32(info_file_t *info);
-int print_header_64(info_file_t *info);
-int print_header(info_file_t *info);
-
-/*
-**flags.c
+**common.c
 */
 size_t catch_flags_64(Elf64_Shdr *shdr, Elf64_Ehdr *ehdr,
 	size_t size_headers);
 size_t catch_flags_32(Elf32_Shdr *shdr, Elf32_Ehdr *ehdr,
 	size_t size_headers);
+
+int print_header_32(info_file_t *info);
+int print_header_64(info_file_t *info);
+
+int print_sections_32(info_file_t *info);
+int print_sections_64(info_file_t *info);
+
 
 /*
 **print_hexa.c

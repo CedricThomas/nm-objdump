@@ -15,15 +15,12 @@ NM_SRC		=	main.c			\
 
 
 OBJDUMP_SRC	=	main.c			\
-			flags.c			\
 			obj.c			\
 			ar.c			\
 			elf.c			\
-			elf_format.c		\
 			misc.c			\
 			print_hexa.c		\
-			print_header.c		\
-			print_section.c
+			print.c
 
 NM_OBJ		=	$(addprefix ./nm/, $(NM_SRC:.c=.o))
 
@@ -55,7 +52,15 @@ $(NM_NAME): $(NM_OBJ)
 			$(addprefix ./nm/, symbols_64.o) $(addprefix ./nm/, symbols_32.o)
 
 $(OBJDUMP_NAME): $(OBJDUMP_OBJ)
-	gcc -o $(OBJDUMP_NAME) $(OBJDUMP_OBJ)
+	gcc -c $(CFLAGS) -DARCHI64 $(addprefix ./objdump/, elf_format.c) -o $(addprefix ./objdump/, elf_format_64.o)
+	gcc -c $(CFLAGS) -DARCHI32 $(addprefix ./objdump/, elf_format.c) -o $(addprefix ./objdump/, elf_format_32.o)
+
+	gcc -c $(CFLAGS) -DARCHI64 $(addprefix ./objdump/, common.c) -o $(addprefix ./objdump/, common_64.o)
+	gcc -c $(CFLAGS) -DARCHI32 $(addprefix ./objdump/, common.c) -o $(addprefix ./objdump/, common_32.o)
+
+	gcc -o $(OBJDUMP_NAME) $(OBJDUMP_OBJ) \
+			$(addprefix ./objdump/, elf_format_64.o) $(addprefix ./objdump/, elf_format_32.o)\
+			$(addprefix ./objdump/, common_64.o) $(addprefix ./objdump/, common_32.o)
 
 clean:
 	rm -rf $(OBJDUMP_OBJ)
