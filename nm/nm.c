@@ -66,10 +66,10 @@ int nm(info_nm_t *info)
 	format = check_elf(info);
 	if (format == SUCCESS) {
 		if (print_elf(info))
-			return (1);
+			return (ERROR);
 	} else if (check_ar(info) == SUCCESS) {
 		if (print_ar(info))
-			return (1);
+			return (ERROR);
 	} else
 		return (nmputerror(info, "Invalid elf header."));
 	return (0);

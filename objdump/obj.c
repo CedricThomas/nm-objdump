@@ -39,10 +39,10 @@ int objdump(info_obj_t *info)
 	format = check_elf(info);
 	if (format == SUCCESS) {
 		if (print_elf(&info->finfo))
-			return (1);
+			return (ERROR);
 	} else if (check_ar(info) == SUCCESS) {
 		if (print_ar(info))
-			return (1);
+			return (ERROR);
 	} else
 		return (my_puterror(info, "Invalid elf header."));
 	munmap(info->finfo.vadress, info->finfo.size);
