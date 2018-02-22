@@ -34,7 +34,9 @@ $(NM_NAME): CFLAGS = -g -W -Wall -Wextra -I nm/include
 
 $(OBJDUMP_NAME): CFLAGS	= -g -W -Wall -Wextra  -I objdump/include
 
-all: $(NM_NAME) $(OBJDUMP_NAME)
+all: nm objdump
+
+nm: $(NM_NAME)
 
 $(NM_NAME): $(NM_OBJ)
 	gcc -c $(CFLAGS) -DARCHI64 $(addprefix ./nm/, elf_format.c) -o $(addprefix ./nm/, elf_format_64.o)
@@ -50,6 +52,8 @@ $(NM_NAME): $(NM_OBJ)
 			$(addprefix ./nm/, elf_format_64.o) $(addprefix ./nm/, elf_format_32.o)	\
 			$(addprefix ./nm/, print_type_64.o) $(addprefix ./nm/, print_type_32.o)	\
 			$(addprefix ./nm/, symbols_64.o) $(addprefix ./nm/, symbols_32.o)
+
+objdump: $(OBJDUMP_NAME)
 
 $(OBJDUMP_NAME): $(OBJDUMP_OBJ)
 	gcc -c $(CFLAGS) -DARCHI64 $(addprefix ./objdump/, elf_format.c) -o $(addprefix ./objdump/, elf_format_64.o)
@@ -72,4 +76,4 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: all clean fclean re
+.PHONY: all clean fclean re nm objdump
