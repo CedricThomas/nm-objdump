@@ -29,7 +29,7 @@ static int map_file(info_nm_t *i)
 	finfo->size = (size_t) s.st_size;
 	finfo->vadress = mmap(0, finfo->size, PROT_READ, MAP_PRIVATE, fd, 0);
 	if (finfo->vadress == MAP_FAILED)
-		return (nmputerror(i, "not enought memory"));
+		return (nmputerror(i, "File format not recognized"));
 	close(fd);
 	return (SUCCESS);
 }

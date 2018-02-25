@@ -28,7 +28,7 @@ static int map_file(info_obj_t *i)
 	finfo->size = (size_t) s.st_size;
 	finfo->vadress = mmap(0, finfo->size, PROT_READ, MAP_PRIVATE, fd, 0);
 	if (finfo->vadress == MAP_FAILED)
-		return (my_puterror(i, "not enought memory"));
+		return (my_puterror(i, "File format not recognized"));
 	close(fd);
 	return (SUCCESS);
 }
