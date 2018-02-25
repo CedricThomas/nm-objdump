@@ -38,7 +38,9 @@ $(NM_NAME): CFLAGS = -g -W -Wall -Wextra -I $(addprefix $(NM_FOLDER), include)
 
 $(OBJDUMP_NAME): CFLAGS	= -g -W -Wall -Wextra  -I  $(addprefix $(OBJDUMP_FOLDER), include)
 
-all: $(NM_NAME) $(OBJDUMP_NAME)
+all: nm objdump
+
+nm: $(NM_NAME)
 
 $(NM_NAME): $(NM_OBJ)
 	gcc -c $(CFLAGS) -DARCHI64 $(addprefix $(NM_FOLDER), elf_format.c) -o $(addprefix $(NM_FOLDER), elf_format_64.o)
@@ -54,6 +56,8 @@ $(NM_NAME): $(NM_OBJ)
 			$(addprefix $(NM_FOLDER), elf_format_64.o) $(addprefix $(NM_FOLDER), elf_format_32.o)	\
 			$(addprefix $(NM_FOLDER), print_type_64.o) $(addprefix $(NM_FOLDER), print_type_32.o)	\
 			$(addprefix $(NM_FOLDER), symbols_64.o) $(addprefix $(NM_FOLDER), symbols_32.o)
+
+objdump: $(OBJDUMP_NAME)
 
 $(OBJDUMP_NAME): $(OBJDUMP_OBJ)
 	gcc -c $(CFLAGS) -DARCHI64 $(addprefix $(OBJDUMP_FOLDER), elf_format.c) -o $(addprefix $(OBJDUMP_FOLDER), elf_format_64.o)
@@ -76,4 +80,4 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: all clean fclean re
+.PHONY: all clean fclean re nm objdump
