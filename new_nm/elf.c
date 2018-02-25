@@ -49,12 +49,19 @@ int check_elf(info_nm_t *info)
 {
 	Elf64_Ehdr *elf = info->finfo.vadress;
 
-	if (check_magic_nbr(info, elf) == ERROR)
-		return (ERROR);
-	else if (check_basic_infos(info, elf) == ERROR)
+	if (check_magic_nbr(info, elf) == ERROR ||
+		check_basic_infos(info, elf) == ERROR)
 		return (ERROR);
 	else if (info->finfo.size < eheader_size(info->finfo.archi))
 		return (nmputerror(info, "File format not recognized"));
+	else {
+		if (info->finfo.archi == ELFCLASS32 &&
+			info->finfo.size < ((Elf32_Ehdr *) elf)->e_shoff)
+			return (nmputerror(info, "File truncated"));
+		else if (info->finfo.archi == ELFCLASS64 &&
+			info->finfo.size < elf->e_shoff)
+			return (nmputerror(info, "File truncated"));
+	}
 	return (SUCCESS);
 }
 

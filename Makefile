@@ -24,7 +24,7 @@ OBJDUMP_SRC	=	main.c			\
 
 NM_FOLDER	=	./new_nm/
 
-OBJDUMP_FOLDER	=	./objdump/
+OBJDUMP_FOLDER	=	./new_objdump/
 
 NM_OBJ		=	$(addprefix $(NM_FOLDER), $(NM_SRC:.c=.o))
 

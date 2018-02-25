@@ -39,18 +39,18 @@ void print_flags(size_t flags)
 	printf("\n");
 }
 
-int print_sections(info_file_t *info)
+int print_sections(info_obj_t *info)
 {
-	if (info->archi == ELFCLASS64)
+	if (info->finfo.archi == ELFCLASS64)
 		print_sections_64(info);
 	else
 		print_sections_32(info);
 	return (0);
 }
 
-int print_header(info_file_t *info)
+int print_header(info_obj_t *info)
 {
-	if (info->archi == ELFCLASS64)
+	if (info->finfo.archi == ELFCLASS64)
 		print_header_64(info);
 	else
 		print_header_32(info);
