@@ -82,7 +82,7 @@ int print_ar(info_obj_t *info)
 	size_t i = SARMAG;
 	struct ar_hdr *n = info->finfo.vadress + i;
 
-	printf("In archive %s :\n", info->finfo.name);
+	printf("In archive %s:\n", info->finfo.name);
 	while (!name_header && n &&
 	       !out_of_map(info, n, sizeof(struct ar_hdr)) &&
 	       my_strlen(n->ar_name, '/', 16) == 0) {
