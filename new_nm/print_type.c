@@ -132,5 +132,6 @@ char print_type_64(info_nm_t *info, node_t *n)
 	#endif
 	sum = (ELF64_ST_BIND(s->st_info) == STB_LOCAL && n->type != '?') * 32;
 	n->type += sum;
+	n->type = (n->type != '?' ? n->type : 't');
 	return (SUCCESS);
 }
