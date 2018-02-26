@@ -21,7 +21,6 @@ int print_sections_32(info_obj_t *info)
 	Elf_Shdr *shder = elf_get_sheader_32(info);
 	#endif
 	Elf_Ehdr *ehdr = info->finfo.vadress;
-
 	char *name;
 
 	for (size_t i = 1; i < ehdr->e_shnum; ++i) {

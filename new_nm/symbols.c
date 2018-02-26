@@ -78,20 +78,20 @@ void print_syms_32(info_file_t *info)
 void print_syms_64(info_file_t *info)
 #endif
 {
+	unsigned long val;
+	#ifdef ARCHI32
+	int pad = 8;
+	#elif ARCHI64
+	int pad = 16;
+	#endif
+
 	for (list_t n = info->sym_links; n != NULL; n = n->next) {
-		#ifdef ARCHI32
+		val = ((Elf_Sym *)n->value)->st_value;
 		if (((Elf_Sym *)n->value)->st_value ||
 		    (n->type != 'U' && n->type != 'w'))
-			printf("%08x ", ((Elf_Sym *)n->value)->st_value);
+			printf("%0*lx ", pad, val);
 		else
-			printf("%8s ", "");
-		#elif ARCHI64
-		if (((Elf_Sym *)n->value)->st_value ||
-		    (n->type != 'U' && n->type != 'w'))
-			printf("%016lx ", ((Elf_Sym *)n->value)->st_value);
-		else
-			printf("%16s ", "");
-		#endif
+			printf("%*s ", pad, "");
 		printf("%c ", n->type);
 		printf("%s\n", n->name);
 	}

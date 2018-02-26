@@ -83,4 +83,3 @@ Elf_Shdr *elf_get_section_64(info_nm_t *info, char const *sname)
 	}
 	return (section);
 }
-
